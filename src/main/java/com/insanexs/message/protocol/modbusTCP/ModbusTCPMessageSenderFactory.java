@@ -2,7 +2,6 @@ package com.insanexs.message.protocol.modbusTCP;
 
 import com.insanexs.message.MessageSender;
 import com.insanexs.message.MessageSenderFactory;
-import org.springframework.util.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +19,7 @@ public class ModbusTCPMessageSenderFactory implements MessageSenderFactory {
     @Override
     public MessageSender createMessageSender(String protocol, int timeout) {
         Matcher matcher = pattern.matcher(protocol);
-        if(StringUtils.isEmpty(protocol)){
+        if(protocol == null || protocol.equals("")){
             throw new IllegalArgumentException("protocol can not be null or empty");
         }else if(!matcher.matches()){
             throw new IllegalArgumentException("illegal protocol format:" + protocol);
