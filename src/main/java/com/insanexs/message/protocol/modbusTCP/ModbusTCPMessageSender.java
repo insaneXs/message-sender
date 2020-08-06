@@ -49,7 +49,7 @@ public class ModbusTCPMessageSender implements MessageSender {
                 .channel(NioSocketChannel.class)
                 .handler(new ModbusTCPDecodeHandler())
                 .handler(new ModbusTCPInboundHandler());
-        channel = getChannel();
+//        channel = getChannel();
 
         this.timeout = timeout;
     }
@@ -64,8 +64,9 @@ public class ModbusTCPMessageSender implements MessageSender {
             try {
                 channel = bootstrap.connect(ip, port).sync().channel();
             } catch (InterruptedException e) {
-                logger.warn("Connect Channel failed", e);
-                e.printStackTrace();
+                logger.warn("Connect Channel Interrupted", e);
+            } catch (Exception e){
+                logger.warn("Connection failed", e);
             }
         }
         return channel;
