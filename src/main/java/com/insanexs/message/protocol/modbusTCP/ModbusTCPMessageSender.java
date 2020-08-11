@@ -34,13 +34,15 @@ public class ModbusTCPMessageSender implements MessageSender {
 
     private long timeout;
 
-    private Channel channel;
+    private volatile Channel channel;
+
+    private volatile NioEventLoopGroup group;
 
     public ModbusTCPMessageSender(String ip, int port, long timeout){
         this.ip = ip;
         this.port = port;
 
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        group = new NioEventLoopGroup();
 
         bootstrap = new Bootstrap();
 
@@ -59,7 +61,7 @@ public class ModbusTCPMessageSender implements MessageSender {
     }
 
 
-    private Channel getChannel(){
+    private synchronized Channel getChannel(){
         if(channel == null || !channel.isActive()){
             try {
                 channel = bootstrap.connect(ip, port).sync().channel();
@@ -98,5 +100,16 @@ public class ModbusTCPMessageSender implements MessageSender {
             future = DefaultResponseFuture.sent(channel, reqCmd, timeout);
         }
         return future;
+    }
+
+    @Override
+    public synchronized void close() {
+        if(channel != null){
+            channel.close();
+        }
+
+        if(group != null){
+            group.shutdownGracefully();
+        }
     }
 }

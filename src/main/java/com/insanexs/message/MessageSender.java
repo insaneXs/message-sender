@@ -21,4 +21,9 @@ public interface MessageSender {
      * @return
      */
     Future<MSGResponse> sendCommandAsync(MSGRequest reqCmd);
+
+    /**
+     * 关闭MessageSender
+     */
+    void close();
 }
