@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author: xieshang
@@ -25,6 +27,8 @@ import java.util.concurrent.Future;
 
 public class ModbusTCPMessageSender implements MessageSender {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static Pattern pattern = Pattern.compile("[modbusTCP://]+(\\d+\\.\\d+\\.\\d+\\.\\d+)\\:(\\d+)");
 
     private Bootstrap bootstrap;
 
@@ -38,7 +42,33 @@ public class ModbusTCPMessageSender implements MessageSender {
 
     private volatile NioEventLoopGroup group;
 
+    public ModbusTCPMessageSender(String protocol, long timeout){
+        Matcher matcher = pattern.matcher(protocol);
+        if(protocol == null || protocol.equals("")){
+            throw new IllegalArgumentException("protocol can not be null or empty");
+        }else if(!matcher.matches()){
+            throw new IllegalArgumentException("illegal protocol format:" + protocol);
+        }
+
+        String ip = matcher.group(1);
+        String port = matcher.group(2);
+
+        init(ip, Integer.getInteger(port), timeout);
+    }
+
+    protected void setTimeout(long timeout){
+        this.timeout = timeout;
+    }
+
     public ModbusTCPMessageSender(String ip, int port, long timeout){
+       init(ip, port, timeout);
+    }
+
+    public ModbusTCPMessageSender(String ip, int port){
+        this(ip, port,1000);
+    }
+
+    private void init(String ip, int port, long timeout){
         this.ip = ip;
         this.port = port;
 
@@ -51,15 +81,8 @@ public class ModbusTCPMessageSender implements MessageSender {
                 .channel(NioSocketChannel.class)
                 .handler(new ModbusTCPDecodeHandler())
                 .handler(new ModbusTCPInboundHandler());
-//        channel = getChannel();
-
         this.timeout = timeout;
     }
-
-    public ModbusTCPMessageSender(String ip, int port){
-        this(ip, port,1000);
-    }
-
 
     private synchronized Channel getChannel(){
         if(channel == null || !channel.isActive()){
