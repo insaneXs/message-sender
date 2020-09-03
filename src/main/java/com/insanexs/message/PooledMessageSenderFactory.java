@@ -8,5 +8,5 @@ package com.insanexs.message;
  */
 public interface PooledMessageSenderFactory extends MessageSenderFactory{
 
-    MessageSender createPooledMessageSender(String protocol, int timeout);
+    MessageSender createPooledMessageSender(String protocol, long timeout);
 }

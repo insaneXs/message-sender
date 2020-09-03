@@ -7,6 +7,6 @@ package com.insanexs.message;
  */
 public interface MessageSenderFactory {
 
-    MessageSender createMessageSender(String protocol, int timeout);
+    MessageSender createMessageSender(String protocol, long timeout);
 
 }
