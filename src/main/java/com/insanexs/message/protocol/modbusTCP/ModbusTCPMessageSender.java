@@ -53,7 +53,7 @@ public class ModbusTCPMessageSender implements MessageSender {
         String ip = matcher.group(1);
         String port = matcher.group(2);
 
-        init(ip, Integer.getInteger(port), timeout);
+        init(ip, Integer.valueOf(port), timeout);
     }
 
     protected void setTimeout(long timeout){
