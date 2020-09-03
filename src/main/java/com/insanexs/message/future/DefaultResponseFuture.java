@@ -98,9 +98,9 @@ public class DefaultResponseFuture implements Future<MSGResponse> {
             }
         } finally {
             lock.unlock();
-            if(channel != null){
-                channel.close().sync();
-            }
+//            if(channel != null){
+//                channel.close().sync();
+//            }
         }
         return response;
     }
@@ -170,9 +170,9 @@ public class DefaultResponseFuture implements Future<MSGResponse> {
             if(future != null){
                 future.doReceived(response);
             }
-            if(channel != null){
-                channel.close().sync();
-            }
+//            if(channel != null){
+//                channel.close().sync();
+//            }
 
         }
     }
